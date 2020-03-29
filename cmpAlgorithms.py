@@ -10,7 +10,7 @@ import math
 
 
 def mycompare1(unnowndist, distcore):
-   max_probability = 1e6
+    max_probability = 1e6
     language = ""
     for lang in distcore.keys():   # tablica ze wszytskimi skrótami języków, i - język
         distcore2 = distcore[lang].alain(unnowndist)
