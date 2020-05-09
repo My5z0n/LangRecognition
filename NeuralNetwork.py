@@ -14,8 +14,8 @@ print("Starting...")
 
 x_train = []
 y_train = []
-x_test = []
-y_test = []
+x_validate = []
+y_validate = []
 
 print("Opening Files")
 with open("testdata\\NewTrainX.txt", "r", encoding='utf-8') as testf:
@@ -24,11 +24,11 @@ with open("testdata\\NewTrainX.txt", "r", encoding='utf-8') as testf:
 with open("testdata\\NewTrainY.txt", "r", encoding='utf-8') as testf:
     y_train = testf.readlines()
 
-with open("testdata\\NewTestX.txt", "r", encoding='utf-8') as testf:
-    x_test = testf.readlines()
+with open("testdata\\NewValidateX.txt", "r", encoding='utf-8') as testf:
+    x_validate = testf.readlines()
 
-with open("testdata\\NewTestY.txt", "r", encoding='utf-8') as testf:
-    y_test = testf.readlines()
+with open("testdata\\NewValidateY.txt", "r", encoding='utf-8') as testf:
+    y_validate = testf.readlines()
 
 print("Prepare Trains data")
 x_new_train = []
@@ -44,17 +44,17 @@ for line in y_train:
     y_new_train.append(LANGS.index(line[:-1]))
 
 print("Prepare Test data")
-x_new_test = []
-for line in x_test:
+x_new_validate = []
+for line in x_validate:
     textline = ""
     for c in line:
         if c not in NO_ALFACHARACTERS:
             textline = textline + ' ' + c
-    x_new_test.append(textline)
+    x_new_validate.append(textline)
 
-y_new_test = []
-for line in y_test:
-    y_new_test.append(LANGS.index(line[:-1]))
+y_new_validate = []
+for line in y_validate:
+    y_new_validate.append(LANGS.index(line[:-1]))
 
 print("Inicializing Tokenizer and padding results")
 tokenizer = Tokenizer(oov_token="<OOV>")
@@ -64,15 +64,15 @@ word_index = tokenizer.word_index
 training_sequences = tokenizer.texts_to_sequences(x_new_train)
 training_padded = pad_sequences(training_sequences, maxlen=1200)
 
-testing_sequences = tokenizer.texts_to_sequences(x_new_test)
-testing_padded = pad_sequences(testing_sequences, maxlen=1200)
+validating_sequences = tokenizer.texts_to_sequences(x_new_validate)
+validating_padded = pad_sequences(validating_sequences, maxlen=1200)
 
 import numpy as np
 
 training_padded = np.array(training_padded)
 training_labels = np.array(y_new_train)
-testing_padded = np.array(testing_padded)
-testing_labels = np.array(y_new_test)
+validating_padded = np.array(validating_padded)
+validating_labels = np.array(y_new_validate)
 
 print("Inicializing Model")
 model = tf.keras.Sequential([
@@ -88,7 +88,7 @@ model.summary()
 
 num_epochs = 60
 history = model.fit(training_padded, training_labels, epochs=num_epochs,
-                    validation_data=(testing_padded, testing_labels), verbose=2)
+                    validation_data=(validating_padded, validating_labels), verbose=2)
 
 
 import pandas as pd
@@ -99,7 +99,7 @@ model.save('GRU.h5')
 
 
 
-classifications = model.predict(testing_padded)
+classifications = model.predict(validating_padded)
 classifications = classifications.tolist()
 
 sumtests = LangDistro()  # ile testow z danego jezyka bylo
@@ -107,19 +107,19 @@ sumfails = LangDistro()  # ile testow nasz algorytm zawalil
 # Testujemy!
 print("Runing tests...")
 counter = 0
-for x in range(len(testing_labels)):
+for x in range(len(validating_labels)):
 
     # Zwiekszamy ilosc testow o 1
-    sumtests.appenddist(LANGS[testing_labels[x]])
+    sumtests.appenddist(LANGS[validating_labels[x]])
     # Przygotowywujemy licznik do testow oblanych z akrutalnego jezyka
-    if LANGS[testing_labels[x]] not in sumfails:
-        sumfails[LANGS[testing_labels[x]]] = 0
+    if LANGS[validating_labels[x]] not in sumfails:
+        sumfails[LANGS[validating_labels[x]]] = 0
 
     result = classifications[counter].index(max(classifications[counter]))
 
     # Jezeli zly jezyk zwiekszamy liczne porazek
-    if LANGS[result] != LANGS[testing_labels[x]]:
-        sumfails.appenddist(LANGS[testing_labels[x]])
+    if LANGS[result] != LANGS[validating_labels[x]]:
+        sumfails.appenddist(LANGS[validating_labels[x]])
         #if LANGS[testing_labels[x]] ==  "eng":
         #    print("Example:")
         #    print(x)
@@ -143,7 +143,7 @@ print("Avg:")
 print(np.mean(avg))
 
 print("Example:")
-print(x_test[6])
+print(x_validate[6])
 for i in range(len(LANGS)):
     print(LANGS[i] + ": " + str(classifications[6][i]))
-print("Real: " + str(y_test[6]))
+print("Real: " + str(y_validate[6]))
