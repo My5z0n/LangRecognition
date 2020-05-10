@@ -1,5 +1,7 @@
+import csv
+
 from dictfunctions import LangDistro
-from globalVariables import FILE_TEST_PATH, FILE_ANSWER_PATH
+from globalVariables import FILE_TEST_PATH, FILE_ANSWER_PATH, LANGS
 from DistributionCoreHandler import loadCompleteDistro
 from cmpAlgorithms import KullbackLeibner, BhattacharyyaDistance, Hellinger
 from generateDistribution import createLangDistribution
@@ -25,6 +27,13 @@ def runDistroTests():
     sumfails.append(LangDistro())
 
     ansline = []
+
+    matrix = []
+
+    for i in range(len(LANGS)):
+        matrix.append([])
+        for j in range(len(LANGS)):
+            matrix[i].append(0)
     print("Runing tests...")
     counter = 0
     # laduemy linijki testow
@@ -56,9 +65,9 @@ def runDistroTests():
 
         # Tutaj wywolujemy nasz algorytm porowujacy rozklad tesktu w nieznanym jezyku z naszymi zapisanymi jezykaim
         # Porownojemy je i zwracamy najbardziej nazwe najbardziej podobnego jezyka
-        result1 = BhattacharyyaDistance(newdistro, dist)
+        result1 = 0
         result2 = KullbackLeibner(newdistro, dist)
-        result3 = Hellinger(newdistro, dist)
+        result3 = 0
 
         # Jezeli zly jezyk zwiekszamy liczne porazek
         if result1 != ansline[x]:
@@ -67,18 +76,24 @@ def runDistroTests():
             sumfails[1].appenddist(ansline[x])
         if result3 != ansline[x]:
             sumfails[2].appenddist(ansline[x])
+
+        z1 = LANGS.index(ansline[x])
+        z2= LANGS.index(result2)
+        matrix[z1][z2] += 1
         counter += 1
 
         print(f'Tested {counter}/{len(ansline)}')
 
-
-
-    avg=[]
+    avg = []
     for i in range(3):
-        mysum=0
+        mysum = 0
         for x in sumtests[i].keys():
-            mysum+=(sumtests[i][x] - sumfails[i][x])/( sumtests[i][x]) * 100
-        avg.append(mysum/len(sumtests[i].keys()))
+            mysum += (sumtests[i][x] - sumfails[i][x]) / (sumtests[i][x]) * 100
+        avg.append(mysum / len(sumtests[i].keys()))
+
+    with open('xD.csv', 'w', newline='') as myfile:
+        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+        wr.writerow(matrix)
 
     # Wypisujemy statysyki
     print("Printing Stats...")
@@ -87,7 +102,7 @@ def runDistroTests():
         print("Lang: \"{0}\" Failed: {1} Tested: {2} Accuracy: {3:0.3f}%".format(x, sumfails[0][x], sumtests[0][x],
                                                                                  ((sumtests[0][x] - sumfails[0][x])
                                                                                   / sumtests[0][x]) * 100))
-    print("Avg: "+str(avg[0])+"%")
+    print("Avg: " + str(avg[0]) + "%")
     print("KullbackLeibner:")
     for x in sumtests[1].keys():
         print("Lang: \"{0}\" Failed: {1} Tested: {2} Accuracy: {3:0.3f}%".format(x, sumfails[1][x], sumtests[1][x],
@@ -100,7 +115,6 @@ def runDistroTests():
                                                                                  ((sumtests[2][x] - sumfails[2][x])
                                                                                   / sumtests[2][x]) * 100))
     print("Avg: " + str(avg[2]) + "%")
-
 
 
 if __name__ == "__main__":

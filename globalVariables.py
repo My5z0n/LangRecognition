@@ -10,8 +10,8 @@ MINIMAL_OCCURANCE = 30
 LANGS = ["bul", "ces", "dan", "deu", "ell", "eng", "est", "fin", "fra", "gle", "hrv", "hun",
          "ita", "lav", "lit", "mlt", "nld", "pol", "por", "ron", "slk", "slv", "spa", "swe"]
 
-FILE_TEST_PATH = "testdata\\NewTestX.txt"
-FILE_ANSWER_PATH = "testdata\\NewTestX.txt"
+FILE_TEST_PATH = "testdata\\NewNewTestX.txt"
+FILE_ANSWER_PATH = "testdata\\NewNewTestY.txt"
 
 CORE_DISTRO_FILEPATH = 'CoreDistro'
 
