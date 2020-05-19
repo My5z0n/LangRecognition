@@ -65,9 +65,9 @@ def runDistroTests():
 
         # Tutaj wywolujemy nasz algorytm porowujacy rozklad tesktu w nieznanym jezyku z naszymi zapisanymi jezykaim
         # Porownojemy je i zwracamy najbardziej nazwe najbardziej podobnego jezyka
-        result1 = 0
+        result1 =BhattacharyyaDistance(newdistro,dist)
         result2 = KullbackLeibner(newdistro, dist)
-        result3 = 0
+        result3 = Hellinger(newdistro,dist)
 
         # Jezeli zly jezyk zwiekszamy liczne porazek
         if result1 != ansline[x]:
@@ -91,7 +91,7 @@ def runDistroTests():
             mysum += (sumtests[i][x] - sumfails[i][x]) / (sumtests[i][x]) * 100
         avg.append(mysum / len(sumtests[i].keys()))
 
-    with open('xD.csv', 'w', newline='') as myfile:
+    with open('matrix.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
         wr.writerow(matrix)
 

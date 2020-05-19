@@ -7,7 +7,7 @@ from globalVariables import NO_ALFACHARACTERS, MINIMAL_OCCURANCE
 #
 
 
-# Czy nasz znak to literka czy jakies gowno.
+# Czy nasz znak to literka.
 def standardchar(c):
     if c not in NO_ALFACHARACTERS:
         return True

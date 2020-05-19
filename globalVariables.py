@@ -1,5 +1,4 @@
 # To jest plik ze zmiennymi globalnymi
-# Mozna to uznac za plik konfiguracyjny czy cos
 
 NO_ALFACHARACTERS = [' ', '!', '\"', '#', '$', '%', '&', '\'', '(', ')', '*', '@', '[', '\\', ']', '^', '_', '`', '{',
                      '|', '}', '~', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\n', '?', ',', '.', '/', '-',
